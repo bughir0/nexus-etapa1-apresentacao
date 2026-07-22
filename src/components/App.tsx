@@ -3,11 +3,12 @@
 import { useCallback, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { NetflixHome } from "@/components/NetflixHome";
+import { NexusSplash } from "@/components/NexusSplash";
 import { Presentation } from "@/components/Presentation";
 import { ProfileGate } from "@/components/ProfileGate";
 import type { Profile } from "@/data/profiles";
 
-type Mode = "profiles" | "home" | "player";
+type Mode = "profiles" | "splash" | "home" | "player";
 
 export function App() {
   const [mode, setMode] = useState<Mode>("profiles");
@@ -16,6 +17,10 @@ export function App() {
 
   const selectProfile = useCallback((p: Profile) => {
     setProfile(p);
+    setMode("splash");
+  }, []);
+
+  const splashDone = useCallback(() => {
     setMode("home");
   }, []);
 
@@ -40,17 +45,27 @@ export function App() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.35 }}
+          transition={{ duration: 0.4 }}
         >
           <ProfileGate onSelect={selectProfile} />
+        </motion.div>
+      ) : mode === "splash" ? (
+        <motion.div
+          key="splash"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.45 }}
+        >
+          <NexusSplash onDone={splashDone} />
         </motion.div>
       ) : mode === "home" && profile ? (
         <motion.div
           key={`home-${profile.id}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, scale: 1.02 }}
+          animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.35 }}
+          transition={{ duration: 0.5 }}
         >
           <NetflixHome
             profile={profile}
@@ -61,10 +76,10 @@ export function App() {
       ) : (
         <motion.div
           key="player"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, scale: 1.04 }}
+          animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.35 }}
+          transition={{ duration: 0.45 }}
         >
           <Presentation startIndex={startIndex} onExit={exit} />
         </motion.div>

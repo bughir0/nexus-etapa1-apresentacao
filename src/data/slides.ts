@@ -291,9 +291,20 @@ export const slides: Slide[] = [
 ];
 
 /** Fileiras (rows) estilo Netflix — referenciam os slides por índice. */
-export const rows: Array<{ title: string; slideIndices: number[] }> = [
-  { title: "Continue de onde parou", slideIndices: [0, 3, 6] },
-  { title: "Etapa 1 em destaque", slideIndices: [0, 1, 2, 3, 4, 5, 6, 7, 8] },
+export const rows: Array<{
+  title: string;
+  slideIndices: number[];
+  /** Destaque visual: números grandes estilo Top 10 */
+  variant?: "default" | "top10";
+}> = [
+  { title: "Continue assistindo", slideIndices: [0, 3, 6] },
+  {
+    title: "Top 5 na Nexus hoje",
+    slideIndices: [1, 3, 6, 5, 2],
+    variant: "top10",
+  },
+  { title: "Etapa 1 · Temporada completa", slideIndices: [0, 1, 2, 3, 4, 5, 6, 7, 8] },
   { title: "Ferramentas de Feedback", slideIndices: [3, 4, 1, 5] },
   { title: "Simulação & Prática", slideIndices: [6, 4, 5, 8] },
+  { title: "Nexus Originals", slideIndices: [0, 2, 7, 8] },
 ];
