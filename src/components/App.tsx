@@ -6,9 +6,12 @@ import { NetflixHome } from "@/components/NetflixHome";
 import { NexusSplash } from "@/components/NexusSplash";
 import { Presentation } from "@/components/Presentation";
 import { ProfileGate } from "@/components/ProfileGate";
+import { TitleIntro } from "@/components/TitleIntro";
+import { unlockAudio } from "@/lib/netflixSound";
+import { slides } from "@/data/slides";
 import type { Profile } from "@/data/profiles";
 
-type Mode = "profiles" | "splash" | "home" | "player";
+type Mode = "profiles" | "splash" | "home" | "intro" | "player";
 
 export function App() {
   const [mode, setMode] = useState<Mode>("profiles");
@@ -16,6 +19,7 @@ export function App() {
   const [startIndex, setStartIndex] = useState(0);
 
   const selectProfile = useCallback((p: Profile) => {
+    void unlockAudio();
     setProfile(p);
     setMode("splash");
   }, []);
@@ -28,14 +32,22 @@ export function App() {
     setMode("profiles");
   }, []);
 
+  /** Abre a intro cinematográfica + som antes do player */
   const play = useCallback((index: number) => {
+    void unlockAudio();
     setStartIndex(index);
+    setMode("intro");
+  }, []);
+
+  const introDone = useCallback(() => {
     setMode("player");
   }, []);
 
   const exit = useCallback(() => {
     setMode(profile ? "home" : "profiles");
   }, [profile]);
+
+  const introSlide = slides[startIndex] ?? slides[0];
 
   return (
     <AnimatePresence mode="wait">
@@ -73,11 +85,25 @@ export function App() {
             onSwitchProfile={switchProfile}
           />
         </motion.div>
+      ) : mode === "intro" ? (
+        <motion.div
+          key={`intro-${startIndex}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <TitleIntro
+            title="Comunicação Interna e Feedback"
+            episodeLabel={`T1 · E${String(startIndex + 1).padStart(2, "0")} · ${introSlide.title}`}
+            onDone={introDone}
+          />
+        </motion.div>
       ) : mode === "player" ? (
         <motion.div
           key="player"
-          initial={{ opacity: 0, scale: 1.04 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.45 }}
         >
