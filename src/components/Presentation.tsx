@@ -139,6 +139,20 @@ export function Presentation({
         category={slide.category}
       />
 
+      {/* Voltar — sempre clicável (fora do chrome que auto-esconde) */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onExit?.();
+        }}
+        className="absolute left-4 top-5 z-[60] inline-flex items-center gap-2 rounded-full bg-black/55 px-3.5 py-2 text-sm font-semibold text-white shadow-lg backdrop-blur-md transition hover:bg-black/80 md:left-10"
+      >
+        <ArrowLeftIcon className="h-5 w-5" />
+        <span>Voltar à Home</span>
+      </button>
+
       {/* Top chrome */}
       <motion.header
         initial={false}
@@ -147,19 +161,13 @@ export function Presentation({
           y: controlsVisible ? 0 : -10,
         }}
         transition={{ duration: 0.25 }}
-        className={`pointer-events-none absolute inset-x-0 top-0 z-40 bg-gradient-to-b from-black/90 via-black/50 to-transparent px-4 pb-20 pt-5 md:px-10 ${
-          controlsVisible ? "pointer-events-auto" : ""
+        className={`absolute inset-x-0 top-0 z-40 bg-gradient-to-b from-black/90 via-black/50 to-transparent px-4 pb-20 pt-5 md:px-10 ${
+          controlsVisible ? "pointer-events-auto" : "pointer-events-none"
         }`}
       >
         <div className="mx-auto grid max-w-[1400px] grid-cols-[1fr_auto_1fr] items-center gap-4">
-          <button
-            type="button"
-            onClick={() => onExit?.()}
-            className="inline-flex w-fit items-center gap-2 text-sm font-medium text-white/90 transition hover:text-white"
-          >
-            <ArrowLeftIcon className="h-5 w-5" />
-            <span className="hidden sm:inline">Voltar à Home</span>
-          </button>
+          {/* Espaço reservado ao botão Voltar fixo */}
+          <div className="w-[140px] sm:w-[160px]" aria-hidden />
 
           <div className="min-w-0 text-center">
             <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-nfxred">
@@ -185,10 +193,14 @@ export function Presentation({
         type="button"
         aria-label="Episódio anterior"
         onClick={() => go(index - 1)}
-        disabled={index === 0}
+        disabled={index === 0 || !controlsVisible}
         initial={false}
         animate={{ opacity: controlsVisible && index > 0 ? 1 : 0 }}
-        className="absolute left-3 top-1/2 z-40 hidden h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/70 disabled:pointer-events-none md:grid"
+        className={`absolute left-3 top-1/2 z-40 hidden h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/70 md:grid ${
+          controlsVisible && index > 0
+            ? "pointer-events-auto"
+            : "pointer-events-none"
+        }`}
       >
         <ChevronLeftIcon className="h-6 w-6" />
       </motion.button>
@@ -196,10 +208,14 @@ export function Presentation({
         type="button"
         aria-label="Próximo episódio"
         onClick={() => go(index + 1)}
-        disabled={index === total - 1}
+        disabled={index === total - 1 || !controlsVisible}
         initial={false}
         animate={{ opacity: controlsVisible && index < total - 1 ? 1 : 0 }}
-        className="absolute right-3 top-1/2 z-40 hidden h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/70 disabled:pointer-events-none md:grid"
+        className={`absolute right-3 top-1/2 z-40 hidden h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/70 md:grid ${
+          controlsVisible && index < total - 1
+            ? "pointer-events-auto"
+            : "pointer-events-none"
+        }`}
       >
         <ChevronRightIcon className="h-6 w-6" />
       </motion.button>

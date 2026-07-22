@@ -34,8 +34,8 @@ export function App() {
   }, []);
 
   const exit = useCallback(() => {
-    setMode("home");
-  }, []);
+    setMode(profile ? "home" : "profiles");
+  }, [profile]);
 
   return (
     <AnimatePresence mode="wait">
@@ -73,7 +73,7 @@ export function App() {
             onSwitchProfile={switchProfile}
           />
         </motion.div>
-      ) : (
+      ) : mode === "player" ? (
         <motion.div
           key="player"
           initial={{ opacity: 0, scale: 1.04 }}
@@ -83,7 +83,7 @@ export function App() {
         >
           <Presentation startIndex={startIndex} onExit={exit} />
         </motion.div>
-      )}
+      ) : null}
     </AnimatePresence>
   );
 }
