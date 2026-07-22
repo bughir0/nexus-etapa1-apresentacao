@@ -18,6 +18,10 @@ export const metadata: Metadata = {
   title: "NEXUS · Etapa 1 — Comunicação Interna e Feedback",
   description:
     "Apresentação da Etapa 1: Protocolo SCI de Feedback Interno para a Nexus Serviços & Logística, numa experiência estilo Netflix.",
+  icons: {
+    icon: [{ url: "/icon", type: "image/png" }],
+    apple: [{ url: "/apple-icon", type: "image/png" }],
+  },
 };
 
 export default function RootLayout({
