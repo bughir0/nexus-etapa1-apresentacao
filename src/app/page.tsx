@@ -1,10 +1,5 @@
-import { App } from "@/components/App";
-import { ClientOnly } from "@/components/ClientOnly";
+import { HomeClient } from "@/components/HomeClient";
 
 export default function Home() {
-  return (
-    <ClientOnly>
-      <App />
-    </ClientOnly>
-  );
+  return <HomeClient />;
 }
