@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #07131f;
+  --navy: #0c2438;
+  --steel: #14344d;
+  --teal: #1f7a6c;
+  --mint: #3dba9c;
+  --sand: #e8d5b5;
+  --muted: #a8bac9;
+  --danger: #e07a5f;
+  --line: rgba(255, 255, 255, 0.12);
+
+  /* Paleta Netflix adaptada à marca Nexus */
+  --nfx-bg: #141414;
+  --nfx-red: #e50914;
+  --nfx-red-dark: #b81d24;
+  --nfx-gray: #808080;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-navy: var(--navy);
+  --color-steel: var(--steel);
+  --color-teal: var(--teal);
+  --color-mint: var(--mint);
+  --color-sand: var(--sand);
+  --color-muted: var(--muted);
+  --color-danger: var(--danger);
+  --color-nfxbg: var(--nfx-bg);
+  --color-nfxred: var(--nfx-red);
+  --color-nfxreddark: var(--nfx-red-dark);
+  --color-nfxgray: var(--nfx-gray);
+  --font-sans: var(--font-outfit);
+  --font-display: var(--font-fraunces);
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background: var(--nfx-bg);
+  color: #f4f7fa;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--nfx-red) 45%, transparent);
+}
+
+/* Esconde a barra de rolagem horizontal das fileiras (rows) */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
