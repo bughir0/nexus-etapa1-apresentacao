@@ -2,13 +2,13 @@
 
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { playLogoWhoosh, playTaDum } from "@/lib/netflixSound";
+import { playTaDum } from "@/lib/netflixSound";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
 /**
  * Splash cinematográfica ao escolher o perfil:
- * N slam + ta-dum + logo NEXUS.
+ * N slam + sting + logo NEXUS.
  */
 export function NexusSplash({ onDone }: { onDone: () => void }) {
   useEffect(() => {
@@ -16,10 +16,7 @@ export function NexusSplash({ onDone }: { onDone: () => void }) {
 
     const run = async () => {
       void playTaDum();
-      await wait(280);
-      if (!cancelled) void playLogoWhoosh();
-
-      await wait(2100);
+      await wait(2300);
       if (!cancelled) onDone();
     };
 
