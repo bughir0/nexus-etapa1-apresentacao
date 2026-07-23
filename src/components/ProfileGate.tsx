@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { profiles, type Profile } from "@/data/profiles";
+import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { ease } from "@/components/ui";
 
 export function ProfileGate({
@@ -56,12 +57,10 @@ export function ProfileGate({
               onClick={() => onSelect(profile)}
               className="group flex w-[100px] flex-col items-center gap-3 outline-none md:w-[130px]"
             >
-              <span
-                className="relative grid aspect-square w-full place-items-center overflow-hidden rounded-md text-3xl font-bold text-white shadow-[0_8px_24px_rgba(0,0,0,0.4)] transition duration-200 group-hover:scale-[1.05] group-hover:ring-4 group-hover:ring-white group-focus-visible:ring-4 group-focus-visible:ring-white md:text-5xl"
-                style={{ background: profile.avatar }}
-              >
-                {profile.initials}
-              </span>
+              <ProfileAvatar
+                profile={profile}
+                className="transition duration-200 group-hover:scale-[1.05] group-hover:ring-4 group-hover:ring-white group-focus-visible:ring-4 group-focus-visible:ring-white"
+              />
               <span className="text-sm text-nfxgray transition group-hover:text-white md:text-base">
                 {profile.name}
               </span>
