@@ -11,24 +11,32 @@ const badgeLabel = {
   original: "Original",
 } as const;
 
+const badgePriority: Array<keyof typeof badgeLabel> = [
+  "original",
+  "novo",
+  "top",
+];
+
 function Badges({ badges }: { badges?: Slide["badges"] }) {
   if (!badges?.length) return null;
+  // Um badge principal (estilo Netflix) — evita pilha branca/vermelha confusa
+  const primary =
+    badgePriority.find((b) => badges.includes(b)) ?? badges[0];
+
+  const style =
+    primary === "original"
+      ? "bg-nfxred text-white"
+      : primary === "novo"
+        ? "bg-[#46d369] text-black"
+        : "border border-white/80 bg-black/70 text-white backdrop-blur-sm";
+
   return (
-    <div className="absolute right-2 top-2 z-10 flex flex-col items-end gap-1">
-      {badges.map((b) => (
-        <span
-          key={b}
-          className={`rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-white ${
-            b === "original"
-              ? "bg-nfxred"
-              : b === "top"
-                ? "bg-white text-black"
-                : "bg-mint/90 text-black"
-          }`}
-        >
-          {badgeLabel[b]}
-        </span>
-      ))}
+    <div className="absolute right-2 top-2 z-10">
+      <span
+        className={`rounded-sm px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] shadow-sm ${style}`}
+      >
+        {badgeLabel[primary]}
+      </span>
     </div>
   );
 }
@@ -87,15 +95,16 @@ export function Card({
 
       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-2.5 pb-2.5 pt-10 transition-opacity duration-250 group-hover:opacity-0">
         <p className="line-clamp-1 text-sm font-bold text-white">{slide.title}</p>
-        {typeof progress === "number" ? (
-          <div className="mt-2 h-[3px] overflow-hidden rounded-full bg-white/20">
-            <div
-              className="h-full rounded-full bg-nfxred"
-              style={{ width: `${Math.round(progress * 100)}%` }}
-            />
-          </div>
-        ) : null}
       </div>
+
+      {typeof progress === "number" ? (
+        <div className="absolute inset-x-0 bottom-0 z-20 h-[3px] bg-white/25">
+          <div
+            className="h-full bg-nfxred"
+            style={{ width: `${Math.round(progress * 100)}%` }}
+          />
+        </div>
+      ) : null}
 
       <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black via-black/75 to-black/5 p-3 opacity-0 transition-opacity duration-250 group-hover:opacity-100">
         <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-nfxred">

@@ -61,7 +61,7 @@ export const slides: Slide[] = [
     synopsis:
       "A abertura da Etapa 1: um protocolo prático com o modelo SCI para restaurar o diálogo e reduzir a rotatividade na Nexus.",
     category: "Abertura",
-    badges: ["original", "novo"],
+    badges: ["original"],
     card: {
       src: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=80",
       accent: "#E50914",
@@ -157,7 +157,7 @@ export const slides: Slide[] = [
     synopsis:
       "A ferramenta central: Situação, Comportamento e Impacto para um feedback objetivo, baseado em fatos e sem julgar a pessoa.",
     category: "Ferramentas de Feedback",
-    badges: ["original", "top"],
+    badges: ["original"],
     card: {
       src: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80",
       accent: "#E50914",
@@ -247,7 +247,7 @@ export const slides: Slide[] = [
     synopsis:
       "A encenação Ana × Pedro: uma gestora dá feedback sobre atraso de relatório aplicando o SCI, com escuta ativa e acordo.",
     category: "Simulação & Prática",
-    badges: ["top", "original"],
+    badges: ["original"],
     card: {
       src: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=800&q=80",
       accent: "#E50914",
