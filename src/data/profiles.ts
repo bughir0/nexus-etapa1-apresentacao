@@ -1,10 +1,12 @@
 export type Profile = {
   id: string;
   name: string;
-  /** Gradiente CSS do avatar */
+  /** Gradiente CSS do avatar (fallback) */
   avatar: string;
-  /** Inicial(is) mostradas no avatar */
+  /** Inicial(is) mostradas no avatar sem foto */
   initials: string;
+  /** Foto opcional em /public/profiles/... */
+  photo?: string;
 };
 
 export const profiles: Profile[] = [
@@ -31,6 +33,7 @@ export const profiles: Profile[] = [
     name: "Gustavo",
     initials: "Gs",
     avatar: "linear-gradient(145deg, #f59e0b 0%, #92400e 100%)",
+    // photo: "/profiles/gustavo.jpg", // será preenchido ao receber o arquivo
   },
   {
     id: "joao",

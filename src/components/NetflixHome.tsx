@@ -9,6 +9,7 @@ import { Row } from "@/components/Row";
 import { TitleModal } from "@/components/TitleModal";
 import { ease } from "@/components/ui";
 import { PlayIcon, InfoIcon, MuteIcon, VolumeIcon } from "@/components/icons";
+import { ProfileAvatar } from "@/components/ProfileAvatar";
 import {
   continueIndices,
   loadProgress,
@@ -72,12 +73,11 @@ function Navbar({
             title="Trocar de perfil"
             className="group flex items-center gap-2 rounded outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
-            <span
-              className="grid h-8 w-8 place-items-center rounded text-xs font-bold text-white transition group-hover:ring-2 group-hover:ring-white"
-              style={{ background: profile.avatar }}
-            >
-              {profile.initials}
-            </span>
+            <ProfileAvatar
+              profile={profile}
+              size="sm"
+              className="transition group-hover:ring-2 group-hover:ring-white"
+            />
             <span className="hidden text-sm text-white/75 transition group-hover:text-white md:inline">
               {profile.name}
             </span>
