@@ -15,6 +15,7 @@ export const profiles: Profile[] = [
     name: "Samuel",
     initials: "S",
     avatar: "linear-gradient(145deg, #e50914 0%, #7a0a10 100%)",
+    photo: "/profiles/samuel.jpg",
   },
   {
     id: "riquelme",
