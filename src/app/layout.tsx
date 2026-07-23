@@ -14,12 +14,14 @@ const fraunces = Fraunces({
   display: "swap",
 });
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export const metadata: Metadata = {
   title: "NEXUS · Etapa 1 — Comunicação Interna e Feedback",
   description:
     "Apresentação da Etapa 1: Protocolo SCI de Feedback Interno para a Nexus Serviços & Logística, numa experiência estilo Netflix.",
   applicationName: "NEXUS",
-  manifest: "/manifest.webmanifest",
+  manifest: `${basePath}/manifest.webmanifest`,
   metadataBase: new URL("https://bughir0.github.io/nexus-etapa1-apresentacao"),
   appleWebApp: {
     capable: true,
@@ -27,8 +29,8 @@ export const metadata: Metadata = {
     title: "NEXUS",
   },
   icons: {
-    icon: [{ url: "/icon", type: "image/png" }],
-    apple: [{ url: "/apple-icon", type: "image/png" }],
+    icon: [{ url: `${basePath}/icon`, type: "image/png" }],
+    apple: [{ url: `${basePath}/apple-icon`, type: "image/png" }],
   },
 };
 
