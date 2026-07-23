@@ -12,6 +12,7 @@ import {
   ChevronRightIcon,
   EpisodesIcon,
   FullscreenIcon,
+  InfoIcon,
   MuteIcon,
   PlayIcon,
   VolumeIcon,
@@ -29,6 +30,8 @@ export function Presentation({
   const [muted, setMuted] = useState(true);
   const [titleCardVisible, setTitleCardVisible] = useState(true);
   const [episodesOpen, setEpisodesOpen] = useState(false);
+  /** Roteiro do apresentador — aberto por padrão para ler à turma */
+  const [scriptOpen, setScriptOpen] = useState(true);
   const [direction, setDirection] = useState(0);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const titleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -95,6 +98,7 @@ export function Presentation({
       }
       if (e.key.toLowerCase() === "m") setMuted((m) => !m);
       if (e.key.toLowerCase() === "e") setEpisodesOpen((o) => !o);
+      if (e.key.toLowerCase() === "r") setScriptOpen((o) => !o);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -219,6 +223,36 @@ export function Presentation({
       >
         <ChevronRightIcon className="h-6 w-6" />
       </motion.button>
+
+      {/* Roteiro do apresentador — permanece visível para leitura em voz alta */}
+      <AnimatePresence>
+        {scriptOpen ? (
+          <motion.aside
+            key={`script-${slide.id}`}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            transition={{ duration: 0.28, ease }}
+            className="absolute bottom-[7.5rem] left-4 right-4 z-50 max-h-[38vh] overflow-y-auto rounded-xl border border-white/15 bg-black/80 p-4 shadow-2xl backdrop-blur-md md:bottom-36 md:left-10 md:right-auto md:max-w-xl md:p-5"
+          >
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-nfxred">
+                Roteiro · leia para a turma
+              </p>
+              <button
+                type="button"
+                onClick={() => setScriptOpen(false)}
+                className="shrink-0 text-[11px] font-semibold text-white/45 transition hover:text-white"
+              >
+                Ocultar (R)
+              </button>
+            </div>
+            <p className="text-[15px] leading-relaxed text-white/90 md:text-base">
+              {slide.script}
+            </p>
+          </motion.aside>
+        ) : null}
+      </AnimatePresence>
 
       {/* Episodes drawer */}
       <AnimatePresence>
@@ -379,6 +413,21 @@ export function Presentation({
             </button>
 
             <div className="flex-1" />
+
+            <button
+              type="button"
+              onClick={() => setScriptOpen((o) => !o)}
+              className={`inline-flex items-center gap-2 rounded px-3 py-2 text-xs font-semibold transition ${
+                scriptOpen
+                  ? "bg-nfxred text-white"
+                  : "text-white/80 hover:bg-white/10 hover:text-white"
+              }`}
+              aria-pressed={scriptOpen}
+              title="Tecla R"
+            >
+              <InfoIcon className="h-4 w-4" />
+              <span className="hidden sm:inline">Roteiro</span>
+            </button>
 
             <button
               type="button"

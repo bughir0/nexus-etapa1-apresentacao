@@ -36,6 +36,11 @@ export type Slide = {
   };
   /** Metadados usados na Home estilo Netflix (não altera o conteúdo do slide) */
   synopsis: string;
+  /**
+   * Roteiro curto para o apresentador ler em voz alta para a turma.
+   * Não substitui o conteúdo visual do slide — é o “texto falado”.
+   */
+  script: string;
   category: string;
   card: {
     src: string;
@@ -60,6 +65,8 @@ export const slides: Slide[] = [
     },
     synopsis:
       "A abertura da Etapa 1: um protocolo prático com o modelo SCI para restaurar o diálogo e reduzir a rotatividade na Nexus.",
+    script:
+      "Bom dia, pessoal. Somos a equipe de consultoria da Nexus Serviços & Logística. Nesta Etapa 1 vamos tratar de comunicação interna e feedback. O objetivo é apresentar um protocolo prático, baseado no modelo SCI, para melhorar o diálogo entre gestores e liderados e reduzir a rotatividade no setor.",
     category: "Abertura",
     badges: ["original"],
     card: {
@@ -93,6 +100,8 @@ export const slides: Slide[] = [
     ],
     synopsis:
       "O diagnóstico do setor: críticas em público, ausência de canais seguros e agressividade verbal corroendo o clima e os resultados.",
+    script:
+      "O diagnóstico que encontramos é crítico: o setor está em conflito. Supervisores criticam em público, os auxiliares não têm um canal seguro para falar e a agressividade verbal vira rotina. Isso derruba a qualidade do atendimento, aumenta a rotatividade e deixa o clima organizacional conturbado. Sem mudança na forma de se comunicar, o problema se agrava.",
     category: "Diagnóstico",
     badges: ["top"],
     card: {
@@ -125,6 +134,8 @@ export const slides: Slide[] = [
     ],
     synopsis:
       "Duas entregas urgentes do grupo: o protocolo SCI de feedback interno e a simulação de feedback sobre atraso de relatórios.",
+    script:
+      "Nossa missão nesta etapa tem duas entregas. A primeira é o Protocolo SCI de feedback interno, para padronizar a conversa entre gestores e liderados. A segunda é uma simulação prática: a gestora Ana dá um feedback construtivo ao colaborador Pedro sobre atraso no envio de relatórios. Assim unimos teoria e ensaio.",
     category: "Missão",
     card: {
       src: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80",
@@ -156,6 +167,8 @@ export const slides: Slide[] = [
     ],
     synopsis:
       "A ferramenta central: Situação, Comportamento e Impacto para um feedback objetivo, baseado em fatos e sem julgar a pessoa.",
+    script:
+      "A ferramenta central é o modelo SCI. S de Situação: quando e onde o fato aconteceu. C de Comportamento: o que a pessoa fez, de forma observável, sem rótulos. I de Impacto: o efeito disso no time, no cliente ou na reputação da Nexus. Com o SCI, o feedback fica objetivo e respeitoso — fala do fato, não ataca a pessoa.",
     category: "Ferramentas de Feedback",
     badges: ["original"],
     card: {
@@ -184,6 +197,8 @@ export const slides: Slide[] = [
     ],
     synopsis:
       "O modelo SCI aplicado a um caso real: o atraso no envio do relatório do cliente Alfa, descrito por fatos observáveis.",
+    script:
+      "Vejam o SCI em um caso real. Situação: na sexta, o relatório do cliente Alfa tinha prazo até 17h. Comportamento: o arquivo só foi enviado na segunda, às 11h. Impacto: o cliente cobrou e a equipe teve retrabalho. Notem: nenhum xingamento, só fatos. É assim que o corretivo deixa de ser agressão e vira conversa útil.",
     category: "Ferramentas de Feedback",
     badges: ["novo"],
     card: {
@@ -220,6 +235,8 @@ export const slides: Slide[] = [
     ],
     synopsis:
       "As regras da comunicação assertiva: o que fazer e o que proibir para transformar o corretivo em conversa construtiva.",
+    script:
+      "O protocolo resume o que fazer e o que proibir. Fazer: feedback em privado, aplicar SCI, escutar antes de propor solução, combinar plano e acompanhar, e abrir o canal “Preciso de apoio” para auxiliares. Proibir: criticar em público, gritar ou ironizar, comparar colaboradores e só falar quando a situação já explodiu. São regras simples para mudar o dia a dia.",
     category: "Etapa 1 em destaque",
     card: {
       src: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80",
@@ -246,6 +263,8 @@ export const slides: Slide[] = [
     },
     synopsis:
       "A encenação Ana × Pedro: uma gestora dá feedback sobre atraso de relatório aplicando o SCI, com escuta ativa e acordo.",
+    script:
+      "Agora a parte prática: a encenação Ana × Pedro. Ana, gestora da retaguarda, chama Pedro em particular. Ela aplica o SCI, pergunta o que dificultou o prazo e fecha um acordo — prioridades claras, aviso antecipado e apoio. O que não fazer: dizer “você é irresponsável, sempre atrasa”. Queremos ensaiar o jeito certo antes de levar para o setor.",
     category: "Simulação & Prática",
     badges: ["original"],
     card: {
@@ -277,6 +296,8 @@ export const slides: Slide[] = [
     ],
     synopsis:
       "A base teórica: assertividade e escuta ativa, com a citação do livro sobre saber ouvir com plena eficácia.",
+    script:
+      "A base teórica une assertividade e escuta ativa. Assertividade é falar com clareza e respeito, sem agressão e sem omissão. Escuta ativa é ouvir de verdade, sem interromper, validar o que a pessoa disse e só então construir a solução. Como diz a citação do livro: saber ouvir é indispensável — quem escuta com atenção costuma ser ouvido da mesma forma.",
     category: "Etapa 1 em destaque",
     card: {
       src: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=800&q=80",
@@ -297,6 +318,8 @@ export const slides: Slide[] = [
     ],
     synopsis:
       "O fechamento da Etapa 1: um checklist de entrega e a mensagem final — feedback privado, factual e com acordo retém talentos.",
+    script:
+      "Para fechar: nosso checklist é protocolo digitado, citação do livro preenchida e simulação ensaiada. A mensagem final que queremos deixar: feedback privado, baseado em fatos e com acordo claro retém talentos na Nexus. Comunicação assertiva não é luxo — é ferramenta de gestão e de clima saudável. Obrigado, e seguimos para as perguntas.",
     category: "Encerramento",
     badges: ["original"],
     card: {
