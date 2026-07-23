@@ -442,6 +442,27 @@ function SlideBody({ slide }: { slide: Slide }) {
             </motion.div>
           ))}
         </div>
+
+        {/* Créditos finais */}
+        <FadeIn delay={0.55}>
+          <div className="credits-scroll mt-4 max-w-md space-y-4 border-t border-white/10 pt-6">
+            <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-nfxred">
+              Fim da temporada · Etapa 1
+            </p>
+            <p className="font-[family-name:var(--font-display)] text-xl font-black tracking-[0.14em] text-white/90">
+              NEXUS
+            </p>
+            <div className="space-y-1 text-sm text-white/55">
+              <p className="text-white/35">Elenco & equipe</p>
+              <p>Samuel · Riquelme · Guilherme · Gustavo · João</p>
+              <p className="pt-2 text-white/35">Consultoria Administrativa</p>
+              <p>Comunicação Interna e Feedback · Modelo SCI</p>
+              <p className="pt-3 text-xs text-white/30">
+                Nexus Serviços & Logística · 2026
+              </p>
+            </div>
+          </div>
+        </FadeIn>
       </div>
     </SlideShell>
   );

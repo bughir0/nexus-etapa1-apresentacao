@@ -1,0 +1,23 @@
+{
+  "name": "NEXUS · Etapa 1",
+  "short_name": "NEXUS",
+  "description": "Apresentação Comunicação Interna e Feedback — estilo Netflix",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#141414",
+  "theme_color": "#E50914",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/icon",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-icon",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

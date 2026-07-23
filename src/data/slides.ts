@@ -41,6 +41,8 @@ export type Slide = {
     src: string;
     accent: string;
   };
+  /** Badges exibidos nos cards da home */
+  badges?: Array<"novo" | "top" | "original">;
 };
 
 export const slides: Slide[] = [
@@ -59,6 +61,7 @@ export const slides: Slide[] = [
     synopsis:
       "A abertura da Etapa 1: um protocolo prático com o modelo SCI para restaurar o diálogo e reduzir a rotatividade na Nexus.",
     category: "Abertura",
+    badges: ["original", "novo"],
     card: {
       src: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=80",
       accent: "#E50914",
@@ -91,6 +94,7 @@ export const slides: Slide[] = [
     synopsis:
       "O diagnóstico do setor: críticas em público, ausência de canais seguros e agressividade verbal corroendo o clima e os resultados.",
     category: "Diagnóstico",
+    badges: ["top"],
     card: {
       src: "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=800&q=80",
       accent: "#B81D24",
@@ -153,6 +157,7 @@ export const slides: Slide[] = [
     synopsis:
       "A ferramenta central: Situação, Comportamento e Impacto para um feedback objetivo, baseado em fatos e sem julgar a pessoa.",
     category: "Ferramentas de Feedback",
+    badges: ["original", "top"],
     card: {
       src: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80",
       accent: "#E50914",
@@ -180,6 +185,7 @@ export const slides: Slide[] = [
     synopsis:
       "O modelo SCI aplicado a um caso real: o atraso no envio do relatório do cliente Alfa, descrito por fatos observáveis.",
     category: "Ferramentas de Feedback",
+    badges: ["novo"],
     card: {
       src: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=800&q=80",
       accent: "#E50914",
@@ -241,6 +247,7 @@ export const slides: Slide[] = [
     synopsis:
       "A encenação Ana × Pedro: uma gestora dá feedback sobre atraso de relatório aplicando o SCI, com escuta ativa e acordo.",
     category: "Simulação & Prática",
+    badges: ["top", "original"],
     card: {
       src: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=800&q=80",
       accent: "#E50914",
@@ -291,6 +298,7 @@ export const slides: Slide[] = [
     synopsis:
       "O fechamento da Etapa 1: um checklist de entrega e a mensagem final — feedback privado, factual e com acordo retém talentos.",
     category: "Encerramento",
+    badges: ["original"],
     card: {
       src: "https://images.unsplash.com/photo-1552581234-26160f608093?auto=format&fit=crop&w=800&q=80",
       accent: "#E50914",
@@ -302,14 +310,19 @@ export const slides: Slide[] = [
 export const rows: Array<{
   title: string;
   slideIndices: number[];
-  /** Destaque visual: números grandes estilo Top 10 */
-  variant?: "default" | "top10";
+  /** Destaque visual: números grandes estilo Top 10 / posters verticais */
+  variant?: "default" | "top10" | "posters";
 }> = [
   { title: "Continue assistindo", slideIndices: [0, 3, 6] },
   {
     title: "Top 5 na Nexus hoje",
     slideIndices: [1, 3, 6, 5, 2],
     variant: "top10",
+  },
+  {
+    title: "Em alta · Capas da temporada",
+    slideIndices: [0, 3, 6, 1, 8],
+    variant: "posters",
   },
   { title: "Etapa 1 · Temporada completa", slideIndices: [0, 1, 2, 3, 4, 5, 6, 7, 8] },
   { title: "Ferramentas de Feedback", slideIndices: [3, 4, 1, 5] },

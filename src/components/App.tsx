@@ -8,10 +8,11 @@ import { Presentation } from "@/components/Presentation";
 import { ProfileGate } from "@/components/ProfileGate";
 import { TitleIntro } from "@/components/TitleIntro";
 import { unlockAudio } from "@/lib/netflixSound";
+import { stopAmbient } from "@/lib/ambient";
 import { slides } from "@/data/slides";
 import type { Profile } from "@/data/profiles";
 
-type Mode = "profiles" | "splash" | "home" | "intro" | "player";
+type Mode = "profiles" | "splash" | "home" | "intro" | "blackout" | "player";
 
 export function App() {
   const [mode, setMode] = useState<Mode>("profiles");
@@ -29,18 +30,21 @@ export function App() {
   }, []);
 
   const switchProfile = useCallback(() => {
+    stopAmbient();
     setMode("profiles");
   }, []);
 
-  /** Abre a intro cinematográfica + som antes do player */
   const play = useCallback((index: number) => {
     void unlockAudio();
+    stopAmbient();
     setStartIndex(index);
     setMode("intro");
   }, []);
 
+  /** Fade to black cinematográfico antes do player */
   const introDone = useCallback(() => {
-    setMode("player");
+    setMode("blackout");
+    window.setTimeout(() => setMode("player"), 700);
   }, []);
 
   const exit = useCallback(() => {
@@ -99,13 +103,22 @@ export function App() {
             onDone={introDone}
           />
         </motion.div>
+      ) : mode === "blackout" ? (
+        <motion.div
+          key="blackout"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.35 }}
+          className="fixed inset-0 z-[130] bg-black"
+        />
       ) : mode === "player" ? (
         <motion.div
           key="player"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.45 }}
+          transition={{ duration: 0.55 }}
         >
           <Presentation startIndex={startIndex} onExit={exit} />
         </motion.div>

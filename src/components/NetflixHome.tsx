@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { rows, slides } from "@/data/slides";
@@ -9,14 +9,15 @@ import { Row } from "@/components/Row";
 import { TitleModal } from "@/components/TitleModal";
 import { ease } from "@/components/ui";
 import { PlayIcon, InfoIcon, MuteIcon, VolumeIcon } from "@/components/icons";
+import {
+  continueIndices,
+  loadProgress,
+  type WatchProgress,
+} from "@/lib/progress";
+import { setAmbientMuted, startAmbient, stopAmbient } from "@/lib/ambient";
+import { unlockAudio } from "@/lib/netflixSound";
 
 const navItems = ["Início", "Séries", "Etapa 1", "Minha lista"];
-
-const continueProgress: Record<number, number> = {
-  0: 0.35,
-  3: 0.62,
-  6: 0.18,
-};
 
 function Navbar({
   profile,
@@ -43,7 +44,7 @@ function Navbar({
       }`}
     >
       <div className="mx-auto flex max-w-[1600px] items-center gap-6 px-4 py-3.5 md:px-12">
-        <span className="select-none font-[family-name:var(--font-display)] text-2xl font-black tracking-tight text-nfxred md:text-[1.75rem]">
+        <span className="nfx-glow select-none font-[family-name:var(--font-display)] text-3xl font-black tracking-[-0.04em] text-nfxred md:text-4xl">
           NEXUS
         </span>
         <nav className="hidden items-center gap-5 text-sm text-white/75 md:flex">
@@ -96,9 +97,31 @@ function Billboard({
 }) {
   const hero = slides[0];
   const [muted, setMuted] = useState(true);
+  const [loadingPlay, setLoadingPlay] = useState(false);
+
+  useEffect(() => {
+    return () => stopAmbient();
+  }, []);
+
+  const toggleMute = async () => {
+    const next = !muted;
+    setMuted(next);
+    if (!next) {
+      await unlockAudio();
+      await startAmbient(0.045);
+      setAmbientMuted(false);
+    } else {
+      setAmbientMuted(true);
+    }
+  };
+
+  const handlePlay = () => {
+    setLoadingPlay(true);
+    window.setTimeout(() => onPlay(0), 480);
+  };
 
   return (
-    <section className="relative h-[78vh] min-h-[520px] w-full overflow-hidden md:h-[84vh]">
+    <section className="relative h-[78vh] min-h-[520px] w-full overflow-hidden md:h-[86vh]">
       <div className="absolute inset-0">
         <div className="absolute inset-0 ken-burns">
           <Image
@@ -117,10 +140,19 @@ function Billboard({
 
       <div className="relative z-10 mx-auto flex h-full max-w-[1600px] items-end px-4 pb-24 md:px-12 md:pb-28">
         <div className="max-w-xl">
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, ease }}
+            className="mb-2 font-[family-name:var(--font-display)] text-2xl font-black tracking-[0.12em] text-nfxred drop-shadow-[0_0_24px_rgba(229,9,20,0.45)] md:text-3xl"
+          >
+            NEXUS
+          </motion.p>
+
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, ease }}
+            transition={{ duration: 0.45, delay: 0.05, ease }}
             className="mb-3 flex flex-wrap items-center gap-2"
           >
             <span className="rounded bg-nfxred px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white">
@@ -134,7 +166,7 @@ function Billboard({
           <motion.h1
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.05, ease }}
+            transition={{ duration: 0.55, delay: 0.08, ease }}
             className="font-[family-name:var(--font-display)] text-4xl font-black leading-[1.05] tracking-[-0.03em] text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.55)] md:text-6xl lg:text-7xl"
           >
             {hero.title}
@@ -143,7 +175,7 @@ function Billboard({
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.12, ease }}
+            transition={{ duration: 0.5, delay: 0.14, ease }}
             className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-white/75"
           >
             <span className="text-mint">98% match</span>
@@ -158,7 +190,7 @@ function Billboard({
           <motion.p
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.18, ease }}
+            transition={{ duration: 0.5, delay: 0.2, ease }}
             className="mt-4 max-w-[42ch] text-base leading-relaxed text-white/80 md:text-lg"
           >
             {hero.synopsis}
@@ -167,21 +199,23 @@ function Billboard({
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.26, ease }}
+            transition={{ duration: 0.5, delay: 0.28, ease }}
             className="mt-6 flex flex-wrap items-center gap-3"
           >
             <button
               type="button"
-              onClick={() => onPlay(0)}
-              className="inline-flex items-center gap-2 rounded bg-white px-6 py-2.5 text-base font-bold text-black transition hover:bg-white/85"
+              onClick={handlePlay}
+              disabled={loadingPlay}
+              className="relative inline-flex items-center gap-2 overflow-hidden rounded bg-white px-6 py-3 text-base font-bold text-black transition hover:bg-white/85 disabled:opacity-90 md:py-2.5"
             >
-              <PlayIcon className="h-5 w-5 translate-x-px" />
-              Assistir
+              {loadingPlay ? <span className="shimmer absolute inset-0" /> : null}
+              <PlayIcon className="relative h-5 w-5 translate-x-px" />
+              <span className="relative">{loadingPlay ? "Abrindo…" : "Assistir"}</span>
             </button>
             <button
               type="button"
               onClick={() => onInfo(0)}
-              className="inline-flex items-center gap-2 rounded bg-white/20 px-5 py-2.5 text-base font-bold text-white backdrop-blur-sm transition hover:bg-white/30"
+              className="inline-flex items-center gap-2 rounded bg-white/20 px-5 py-3 text-base font-bold text-white backdrop-blur-sm transition hover:bg-white/30 md:py-2.5"
             >
               <InfoIcon className="h-5 w-5" />
               Mais informações
@@ -192,9 +226,9 @@ function Billboard({
 
       <button
         type="button"
-        onClick={() => setMuted((m) => !m)}
-        aria-label={muted ? "Ativar som" : "Silenciar"}
-        className="absolute bottom-28 right-4 z-20 grid h-10 w-10 place-items-center rounded-full border border-white/35 bg-black/35 text-white backdrop-blur-sm transition hover:bg-black/55 md:bottom-32 md:right-12"
+        onClick={() => void toggleMute()}
+        aria-label={muted ? "Ativar som ambiente" : "Silenciar"}
+        className="absolute bottom-28 right-4 z-20 grid h-11 w-11 place-items-center rounded-full border border-white/35 bg-black/35 text-white backdrop-blur-sm transition hover:bg-black/55 md:bottom-32 md:right-12 md:h-10 md:w-10"
       >
         {muted ? (
           <MuteIcon className="h-4 w-4" />
@@ -216,6 +250,22 @@ export function NetflixHome({
   onSwitchProfile: () => void;
 }) {
   const [infoIndex, setInfoIndex] = useState<number | null>(null);
+  const [progress, setProgress] = useState<WatchProgress>({});
+
+  useEffect(() => {
+    setProgress(loadProgress());
+  }, []);
+
+  const displayRows = useMemo(() => {
+    const cont = continueIndices(progress);
+    const continueRow =
+      cont.length > 0
+        ? { title: "Continue assistindo", slideIndices: cont.slice(0, 8) }
+        : rows.find((r) => r.title.startsWith("Continue")) ?? rows[0];
+
+    const rest = rows.filter((r) => !r.title.startsWith("Continue"));
+    return [continueRow, ...rest];
+  }, [progress]);
 
   return (
     <main className="min-h-dvh w-full bg-nfxbg pb-20 text-white">
@@ -226,7 +276,7 @@ export function NetflixHome({
         id="rows"
         className="relative z-10 -mt-16 space-y-1 md:-mt-24 md:space-y-2"
       >
-        {rows.map((row) => (
+        {displayRows.map((row) => (
           <Row
             key={row.title}
             title={row.title}
@@ -235,14 +285,14 @@ export function NetflixHome({
             onPlay={onPlay}
             onInfo={setInfoIndex}
             continueProgress={
-              row.title.startsWith("Continue") ? continueProgress : undefined
+              row.title.startsWith("Continue") ? progress : undefined
             }
           />
         ))}
       </div>
 
       <footer className="mx-auto mt-14 max-w-[1600px] px-4 text-center md:px-12">
-        <p className="mb-2 font-[family-name:var(--font-display)] text-base font-black tracking-[0.2em] text-white/15">
+        <p className="mb-2 font-[family-name:var(--font-display)] text-xl font-black tracking-[0.22em] text-white/15">
           NEXUS
         </p>
         <p className="text-xs text-white/35">

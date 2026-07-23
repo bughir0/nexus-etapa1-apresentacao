@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Outfit } from "next/font/google";
 import "./globals.css";
 
@@ -18,10 +18,22 @@ export const metadata: Metadata = {
   title: "NEXUS · Etapa 1 — Comunicação Interna e Feedback",
   description:
     "Apresentação da Etapa 1: Protocolo SCI de Feedback Interno para a Nexus Serviços & Logística, numa experiência estilo Netflix.",
+  applicationName: "NEXUS",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "NEXUS",
+  },
   icons: {
     icon: [{ url: "/icon", type: "image/png" }],
     apple: [{ url: "/apple-icon", type: "image/png" }],
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#E50914",
+  colorScheme: "dark",
 };
 
 /** Remove attrs injetados por extensões (Bitdefender etc.) antes da hidratação. */
