@@ -20,6 +20,7 @@ export const metadata: Metadata = {
     "Apresentação da Etapa 1: Protocolo SCI de Feedback Interno para a Nexus Serviços & Logística, numa experiência estilo Netflix.",
   applicationName: "NEXUS",
   manifest: "/manifest.webmanifest",
+  metadataBase: new URL("https://bughir0.github.io/nexus-etapa1-apresentacao"),
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",

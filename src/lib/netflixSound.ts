@@ -3,13 +3,15 @@
  * Não usa o áudio proprietário “tudum” da Netflix.
  */
 
+import { withBasePath } from "@/lib/basePath";
+
 let sharedAudio: HTMLAudioElement | null = null;
 let unlocked = false;
 
 function getAudio(): HTMLAudioElement | null {
   if (typeof window === "undefined") return null;
   if (!sharedAudio) {
-    sharedAudio = new Audio("/sounds/tudum.mp3");
+    sharedAudio = new Audio(withBasePath("/sounds/tudum.mp3"));
     sharedAudio.preload = "auto";
     sharedAudio.volume = 1;
   }
@@ -51,7 +53,6 @@ export async function playTaDum(): Promise<void> {
         resolve();
       };
       audio.addEventListener("ended", done);
-      // fallback se ended não disparar
       window.setTimeout(done, 1600);
     });
   } catch {
@@ -59,7 +60,7 @@ export async function playTaDum(): Promise<void> {
   }
 }
 
-/** Mantido por compatibilidade — whoosh leve via volume curto do mesmo sting. */
+/** Mantido por compatibilidade. */
 export async function playLogoWhoosh(): Promise<void> {
-  /* intencionalmente vazio: o sting principal já cobre a intro */
+  /* intencionalmente vazio */
 }
