@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import type { Profile } from "@/data/profiles";
-import { withBasePath } from "@/lib/basePath";
 
 export function ProfileAvatar({
   profile,
@@ -25,11 +24,11 @@ export function ProfileAvatar({
     >
       {profile.photo ? (
         <Image
-          src={withBasePath(profile.photo)}
+          src={profile.photo}
           alt={profile.name}
           fill
           sizes={size === "sm" ? "32px" : "140px"}
-          className="object-cover object-center"
+          className="object-cover object-[center_20%]"
         />
       ) : (
         profile.initials
