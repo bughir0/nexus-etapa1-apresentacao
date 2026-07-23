@@ -359,7 +359,7 @@ function SlideBody({ slide }: { slide: Slide }) {
   if (slide.kind === "theory") {
     return (
       <SlideShell>
-        <div className="space-y-6 md:space-y-8">
+        <div className="space-y-5 md:space-y-7">
           <div className="space-y-3">
             <FadeIn>
               <Badge>{slide.category}</Badge>
@@ -380,18 +380,20 @@ function SlideBody({ slide }: { slide: Slide }) {
               </FadeIn>
             ) : null}
           </div>
-          <FadeIn delay={0.24}>
-            <div className="rounded-lg bg-white/[0.06] p-5 ring-1 ring-inset ring-white/10 md:p-6">
-              <h3 className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-nfxred">
-                Modelo de citação
-              </h3>
-              <p className="text-[15px] leading-relaxed text-white/85 md:text-base">
-                Segundo <strong className="text-white">[AUTOR]</strong>, em “
-                <strong className="text-white">[TÍTULO]</strong>” (ano, p. X),
-                “[trecho sobre comunicação assertiva ou escuta ativa]”.
-              </p>
-            </div>
-          </FadeIn>
+
+          {slide.citation ? (
+            <FadeIn delay={0.24}>
+              <blockquote className="rounded-lg border-l-[3px] border-nfxred bg-white/[0.06] p-5 ring-1 ring-inset ring-white/10 md:p-6">
+                <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-nfxred">
+                  Citação · {slide.citation.theme ?? "Livro"}
+                </p>
+                <p className="text-[15px] leading-relaxed text-white/90 md:text-base">
+                  “{slide.citation.text}”
+                </p>
+              </blockquote>
+            </FadeIn>
+          ) : null}
+
           <div className="grid gap-4 md:grid-cols-2">
             {slide.panels?.map((panel, i) => (
               <FadeIn key={panel.title} delay={0.32 + i * 0.08}>

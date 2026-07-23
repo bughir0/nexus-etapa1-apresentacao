@@ -29,6 +29,11 @@ export type Slide = {
   hint?: string;
   checklist?: string[];
   finalLine?: string;
+  /** Citação do livro (slide de fundamentação) */
+  citation?: {
+    text: string;
+    theme?: string;
+  };
   /** Metadados usados na Home estilo Netflix (não altera o conteúdo do slide) */
   synopsis: string;
   category: string;
@@ -246,8 +251,11 @@ export const slides: Slide[] = [
     kind: "theory",
     eyebrow: "Acervo da biblioteca",
     title: "Fundamentação teórica",
-    lead:
-      "Consultar 1 livro de Comunicação Organizacional ou Gestão de Pessoas.",
+    lead: "Escuta ativa como base da comunicação assertiva no feedback interno.",
+    citation: {
+      theme: "Escuta ativa",
+      text: "Saber ouvir é uma característica indispensável para o sucesso. Além de um talento, é uma fonte reveladora de novos horizontes. Ouvir com plena eficácia é dar a sua completa atenção e compreensão a quem fala, interpretando os símbolos verbais e não verbais do processo da comunicação. Antes de ser um orador bem sucedido é importante que se seja um bom ouvinte, pois ao ouvir as pessoas, demonstrando interesse, provavelmente elas darão igual atenção à sua fala.",
+    },
     panels: [
       {
         title: "Assertividade",
@@ -261,7 +269,7 @@ export const slides: Slide[] = [
       },
     ],
     synopsis:
-      "A base teórica: assertividade e escuta ativa, com citação de um livro de Comunicação Organizacional ou Gestão de Pessoas.",
+      "A base teórica: assertividade e escuta ativa, com a citação do livro sobre saber ouvir com plena eficácia.",
     category: "Etapa 1 em destaque",
     card: {
       src: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=800&q=80",
@@ -277,7 +285,7 @@ export const slides: Slide[] = [
       "Feedback privado, factual e com acordo retém talentos na Nexus.",
     checklist: [
       "Protocolo digitado no Word/Docs",
-      "Citação do livro físico preenchida",
+      "Citação do livro preenchida (escuta ativa)",
       "Simulação ensaiada (Ana e Pedro)",
     ],
     synopsis:
