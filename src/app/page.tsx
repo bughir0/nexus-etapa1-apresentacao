@@ -1,5 +1,5 @@
-import { App } from "@/components/App";
+import { HomeClient } from "@/components/HomeClient";
 
 export default function Home() {
-  return <App />;
+  return <HomeClient />;
 }

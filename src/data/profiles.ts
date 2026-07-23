@@ -1,10 +1,12 @@
 export type Profile = {
   id: string;
   name: string;
-  /** Gradiente CSS do avatar */
+  /** Gradiente CSS do avatar (fallback se a foto faltar) */
   avatar: string;
-  /** Inicial(is) mostradas no avatar */
+  /** Inicial(is) sem foto */
   initials: string;
+  /** Foto em /public/profiles/... */
+  photo?: string;
 };
 
 export const profiles: Profile[] = [
@@ -13,12 +15,14 @@ export const profiles: Profile[] = [
     name: "Samuel",
     initials: "S",
     avatar: "linear-gradient(145deg, #e50914 0%, #7a0a10 100%)",
+    photo: "/profiles/samuel.jpg",
   },
   {
     id: "riquelme",
     name: "Riquelme",
     initials: "R",
     avatar: "linear-gradient(145deg, #1f7a6c 0%, #0c3d36 100%)",
+    photo: "/profiles/riquelme.jpg",
   },
   {
     id: "guilherme",
@@ -31,11 +35,13 @@ export const profiles: Profile[] = [
     name: "Gustavo",
     initials: "Gs",
     avatar: "linear-gradient(145deg, #f59e0b 0%, #92400e 100%)",
+    photo: "/profiles/gustavo.jpg",
   },
   {
     id: "joao",
     name: "João",
     initials: "J",
     avatar: "linear-gradient(145deg, #a855f7 0%, #4c1d95 100%)",
+    photo: "/profiles/joao.jpg",
   },
 ];

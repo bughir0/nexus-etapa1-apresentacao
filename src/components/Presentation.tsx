@@ -1,36 +1,73 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { slides } from "@/data/slides";
 import { SlideView } from "@/components/SlideView";
-import { ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
+import { TitleCard } from "@/components/TitleCard";
+import { ease } from "@/components/ui";
+import {
+  ArrowLeftIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  EpisodesIcon,
+  FullscreenIcon,
+  InfoIcon,
+  MuteIcon,
+  PlayIcon,
+  VolumeIcon,
+} from "@/components/icons";
 
 export function Presentation({
   startIndex = 0,
   onExit,
+  showPresenterScript = false,
 }: {
   startIndex?: number;
   onExit?: () => void;
+  /** Roteiro só para o perfil apresentador (Gustavo) */
+  showPresenterScript?: boolean;
 }) {
   const [index, setIndex] = useState(startIndex);
   const [controlsVisible, setControlsVisible] = useState(true);
+  const [muted, setMuted] = useState(true);
+  const [titleCardVisible, setTitleCardVisible] = useState(true);
+  const [episodesOpen, setEpisodesOpen] = useState(false);
+  /** Roteiro do apresentador — aberto por padrão só no perfil Gustavo */
+  const [scriptOpen, setScriptOpen] = useState(showPresenterScript);
+  const [direction, setDirection] = useState(0);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const titleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const total = slides.length;
   const slide = slides[index];
+  const nextSlide = index < total - 1 ? slides[index + 1] : null;
+  const progress = ((index + 1) / total) * 100;
 
   const go = useCallback(
     (n: number) => {
-      setIndex(Math.max(0, Math.min(total - 1, n)));
+      const next = Math.max(0, Math.min(total - 1, n));
+      if (next === index) return;
+      setDirection(next > index ? 1 : -1);
+      setIndex(next);
+      setEpisodesOpen(false);
     },
-    [total],
+    [total, index],
   );
 
   const revealControls = useCallback(() => {
     setControlsVisible(true);
     if (hideTimer.current) clearTimeout(hideTimer.current);
-    hideTimer.current = setTimeout(() => setControlsVisible(false), 3000);
+    hideTimer.current = setTimeout(() => setControlsVisible(false), 3500);
   }, []);
+
+  useEffect(() => {
+    setTitleCardVisible(true);
+    if (titleTimer.current) clearTimeout(titleTimer.current);
+    titleTimer.current = setTimeout(() => setTitleCardVisible(false), 1400);
+    return () => {
+      if (titleTimer.current) clearTimeout(titleTimer.current);
+    };
+  }, [index]);
 
   useEffect(() => {
     revealControls();
@@ -53,24 +90,24 @@ export function Presentation({
       if (e.key === "Home") go(0);
       if (e.key === "End") go(total - 1);
       if (e.key === "Escape") {
-        if (document.fullscreenElement) {
-          void document.exitFullscreen?.();
-        } else {
-          onExit?.();
-        }
+        if (episodesOpen) setEpisodesOpen(false);
+        else if (document.fullscreenElement) void document.exitFullscreen?.();
+        else onExit?.();
       }
       if (e.key.toLowerCase() === "f") {
-        if (!document.fullscreenElement) {
+        if (!document.fullscreenElement)
           void document.documentElement.requestFullscreen?.();
-        } else {
-          void document.exitFullscreen?.();
-        }
+        else void document.exitFullscreen?.();
+      }
+      if (e.key.toLowerCase() === "m") setMuted((m) => !m);
+      if (e.key.toLowerCase() === "e") setEpisodesOpen((o) => !o);
+      if (showPresenterScript && e.key.toLowerCase() === "r") {
+        setScriptOpen((o) => !o);
       }
     };
-
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [go, index, total, onExit, revealControls]);
+  }, [go, index, total, onExit, revealControls, episodesOpen, showPresenterScript]);
 
   useEffect(() => {
     let startX: number | null = null;
@@ -92,113 +129,337 @@ export function Presentation({
     };
   }, [go, index, revealControls]);
 
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement)
+      void document.documentElement.requestFullscreen?.();
+    else void document.exitFullscreen?.();
+  };
+
   return (
     <main
       onMouseMove={revealControls}
-      className="relative h-dvh w-full overflow-hidden bg-nfxbg text-white"
+      className="relative h-dvh w-full overflow-hidden bg-black text-white"
     >
-      {/* Barra de progresso vermelha estilo Netflix (topo) */}
-      <div className="fixed inset-x-0 top-0 z-40 h-1 bg-white/15">
-        <div
-          className="h-full bg-nfxred transition-[width] duration-300"
-          style={{ width: `${((index + 1) / total) * 100}%` }}
-        />
-      </div>
+      <TitleCard
+        visible={titleCardVisible}
+        episode={index + 1}
+        total={total}
+        title={slide.title}
+        category={slide.category}
+      />
 
-      {/* Topo: voltar + contador (auto-hide) */}
-      <motion.div
-        initial={false}
-        animate={{ opacity: controlsVisible ? 1 : 0, y: controlsVisible ? 0 : -8 }}
-        transition={{ duration: 0.25 }}
-        className="fixed inset-x-0 top-0 z-30 flex items-center justify-between bg-gradient-to-b from-black/70 to-transparent px-4 pb-8 pt-4 md:px-8"
+      {/* Voltar — sempre clicável (fora do chrome que auto-esconde) */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onExit?.();
+        }}
+        className="absolute left-4 top-5 z-[60] inline-flex items-center gap-2 rounded-full bg-black/55 px-3.5 py-2 text-sm font-semibold text-white shadow-lg backdrop-blur-md transition hover:bg-black/80 md:left-10"
       >
-        <button
-          type="button"
-          onClick={() => onExit?.()}
-          className="inline-flex items-center gap-2 rounded-full bg-black/40 px-4 py-2 text-sm font-semibold text-white backdrop-blur transition hover:bg-black/70"
-        >
-          <ArrowLeftIcon className="h-4 w-4" />
-          Voltar
-        </button>
-        <span className="hidden max-w-[40vw] truncate text-sm font-semibold text-white/85 md:inline">
-          {slide.title}
-        </span>
-        <span className="rounded-full bg-black/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-white/80 backdrop-blur">
-          {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-        </span>
-      </motion.div>
+        <ArrowLeftIcon className="h-5 w-5" />
+        <span>Voltar à Home</span>
+      </button>
+
+      {/* Top chrome */}
+      <motion.header
+        initial={false}
+        animate={{
+          opacity: controlsVisible ? 1 : 0,
+          y: controlsVisible ? 0 : -10,
+        }}
+        transition={{ duration: 0.25 }}
+        className={`absolute inset-x-0 top-0 z-40 bg-gradient-to-b from-black/90 via-black/50 to-transparent px-4 pb-20 pt-5 md:px-10 ${
+          controlsVisible ? "pointer-events-auto" : "pointer-events-none"
+        }`}
+      >
+        <div className="mx-auto grid max-w-[1400px] grid-cols-[1fr_auto_1fr] items-center gap-4">
+          {/* Espaço reservado ao botão Voltar fixo */}
+          <div className="w-[140px] sm:w-[160px]" aria-hidden />
+
+          <div className="min-w-0 text-center">
+            <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-nfxred">
+              Nexus · T1
+            </p>
+            <p className="mt-0.5 truncate text-sm font-semibold text-white/90">
+              E{String(index + 1).padStart(2, "0")} · {slide.title}
+            </p>
+          </div>
+
+          <div className="justify-self-end text-right text-xs font-semibold tabular-nums tracking-wide text-white/55">
+            {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+          </div>
+        </div>
+      </motion.header>
 
       <div className="relative h-full">
-        <SlideView slide={slide} />
+        <SlideView slide={slide} direction={direction} />
       </div>
 
-      {/* Setas laterais */}
+      {/* Side nav — desktop */}
       <motion.button
         type="button"
-        aria-label="Slide anterior"
+        aria-label="Episódio anterior"
         onClick={() => go(index - 1)}
-        disabled={index === 0}
+        disabled={index === 0 || !controlsVisible}
         initial={false}
-        animate={{ opacity: controlsVisible ? 1 : 0 }}
-        transition={{ duration: 0.25 }}
-        className="fixed left-2 top-1/2 z-30 hidden -translate-y-1/2 grid-cols-1 place-items-center rounded-full bg-black/40 p-3 text-white backdrop-blur transition hover:bg-black/70 disabled:pointer-events-none disabled:opacity-0 md:grid"
+        animate={{ opacity: controlsVisible && index > 0 ? 1 : 0 }}
+        className={`absolute left-3 top-1/2 z-40 hidden h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/70 md:grid ${
+          controlsVisible && index > 0
+            ? "pointer-events-auto"
+            : "pointer-events-none"
+        }`}
       >
         <ChevronLeftIcon className="h-6 w-6" />
       </motion.button>
       <motion.button
         type="button"
-        aria-label="Próximo slide"
+        aria-label="Próximo episódio"
         onClick={() => go(index + 1)}
-        disabled={index === total - 1}
+        disabled={index === total - 1 || !controlsVisible}
         initial={false}
-        animate={{ opacity: controlsVisible ? 1 : 0 }}
-        transition={{ duration: 0.25 }}
-        className="fixed right-2 top-1/2 z-30 hidden -translate-y-1/2 grid-cols-1 place-items-center rounded-full bg-black/40 p-3 text-white backdrop-blur transition hover:bg-black/70 disabled:pointer-events-none disabled:opacity-0 md:grid"
+        animate={{ opacity: controlsVisible && index < total - 1 ? 1 : 0 }}
+        className={`absolute right-3 top-1/2 z-40 hidden h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/70 md:grid ${
+          controlsVisible && index < total - 1
+            ? "pointer-events-auto"
+            : "pointer-events-none"
+        }`}
       >
         <ChevronRightIcon className="h-6 w-6" />
       </motion.button>
 
-      {/* Rodapé: dots + navegação (auto-hide) */}
-      <motion.nav
+      {/* Roteiro — apenas no perfil Gustavo */}
+      <AnimatePresence>
+        {showPresenterScript && scriptOpen ? (
+          <motion.aside
+            key={`script-${slide.id}`}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            transition={{ duration: 0.28, ease }}
+            className="absolute bottom-[7.5rem] left-4 right-4 z-50 max-h-[38vh] overflow-y-auto rounded-xl border border-white/15 bg-black/80 p-4 shadow-2xl backdrop-blur-md md:bottom-36 md:left-10 md:right-auto md:max-w-xl md:p-5"
+          >
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-nfxred">
+                Roteiro · leia para a turma
+              </p>
+              <button
+                type="button"
+                onClick={() => setScriptOpen(false)}
+                className="shrink-0 text-[11px] font-semibold text-white/45 transition hover:text-white"
+              >
+                Ocultar (R)
+              </button>
+            </div>
+            <p className="text-[15px] leading-relaxed text-white/90 md:text-base">
+              {slide.script}
+            </p>
+          </motion.aside>
+        ) : null}
+      </AnimatePresence>
+
+      {/* Episodes drawer */}
+      <AnimatePresence>
+        {episodesOpen ? (
+          <motion.aside
+            initial={{ opacity: 0, x: 28 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 28 }}
+            transition={{ duration: 0.28, ease }}
+            className="absolute bottom-28 right-4 top-24 z-50 flex w-[min(340px,calc(100vw-2rem))] flex-col overflow-hidden rounded-xl border border-white/10 bg-[#141414]/97 shadow-2xl backdrop-blur-xl md:right-10"
+          >
+            <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-3">
+              <h3 className="text-sm font-bold text-white">Episódios</h3>
+              <button
+                type="button"
+                onClick={() => setEpisodesOpen(false)}
+                className="text-xs font-semibold text-white/45 transition hover:text-white"
+              >
+                Fechar
+              </button>
+            </div>
+            <ul className="flex-1 overflow-y-auto p-2">
+              {slides.map((ep, i) => (
+                <li key={ep.id}>
+                  <button
+                    type="button"
+                    onClick={() => go(i)}
+                    className={`flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-left transition hover:bg-white/10 ${
+                      i === index ? "bg-white/10" : ""
+                    }`}
+                  >
+                    <span className="mt-0.5 w-5 shrink-0 text-center text-xs font-bold text-white/35">
+                      {i + 1}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-white">
+                        {ep.title}
+                      </p>
+                      <p className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-white/40">
+                        {ep.synopsis}
+                      </p>
+                    </div>
+                    {i === index ? (
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-nfxred" />
+                    ) : null}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </motion.aside>
+        ) : null}
+      </AnimatePresence>
+
+      {/* Bottom chrome */}
+      <motion.footer
         initial={false}
-        animate={{ opacity: controlsVisible ? 1 : 0, y: controlsVisible ? 0 : 12 }}
+        animate={{
+          opacity: controlsVisible ? 1 : 0,
+          y: controlsVisible ? 0 : 16,
+        }}
         transition={{ duration: 0.25 }}
-        className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-[auto_1fr_auto] items-center gap-4 bg-gradient-to-t from-black/85 to-transparent px-4 pb-4 pt-10 md:px-8"
+        className={`absolute inset-x-0 bottom-0 z-40 bg-gradient-to-t from-black via-black/85 to-transparent px-4 pb-5 pt-20 md:px-10 ${
+          controlsVisible ? "pointer-events-auto" : "pointer-events-none"
+        }`}
       >
-        <button
-          type="button"
-          onClick={() => go(index - 1)}
-          disabled={index === 0}
-          className="rounded bg-white/15 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/25 disabled:cursor-default disabled:opacity-35"
-        >
-          Anterior
-        </button>
+        <div className="mx-auto max-w-[1400px]">
+          {/* Next-up + scrubber row */}
+          <div className="mb-4 flex items-end justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <p className="mb-1 truncate text-sm font-semibold text-white md:text-base">
+                {slide.title}
+              </p>
+              <p className="truncate text-[11px] text-white/45 md:text-xs">
+                Episódio {index + 1} de {total} · {slide.category}
+              </p>
+            </div>
 
-        <div className="flex flex-wrap justify-center gap-2">
-          {slides.map((s, i) => (
+            {nextSlide ? (
+              <button
+                type="button"
+                onClick={() => go(index + 1)}
+                className="hidden max-w-[220px] shrink-0 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-left backdrop-blur transition hover:bg-white/10 md:block"
+              >
+                <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/40">
+                  A seguir · Ep. {String(index + 2).padStart(2, "0")}
+                </p>
+                <p className="mt-0.5 truncate text-xs font-semibold text-white/85">
+                  {nextSlide.title}
+                </p>
+              </button>
+            ) : null}
+          </div>
+
+          {/* Scrubber */}
+          <div
+            role="slider"
+            aria-valuenow={index + 1}
+            aria-valuemin={1}
+            aria-valuemax={total}
+            aria-label="Progresso da temporada"
+            className="group/scrub mb-4 h-1 cursor-pointer rounded-full bg-white/20"
+            onClick={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const ratio = (e.clientX - rect.left) / rect.width;
+              go(Math.round(ratio * (total - 1)));
+            }}
+          >
+            <div
+              className="relative h-full rounded-full bg-nfxred transition-[width] duration-300"
+              style={{ width: `${progress}%` }}
+            >
+              <span className="absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 translate-x-1/2 rounded-full bg-nfxred opacity-0 shadow-md transition group-hover/scrub:opacity-100" />
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div className="flex items-center gap-1.5 md:gap-2">
             <button
-              key={s.id}
               type="button"
-              aria-label={`Ir para slide ${i + 1}`}
-              onClick={() => go(i)}
-              className={`h-2.5 rounded-full transition-all ${
-                i === index
-                  ? "w-6 bg-nfxred"
-                  : "w-2.5 bg-white/25 hover:bg-white/50"
-              }`}
-            />
-          ))}
-        </div>
+              onClick={() => go(index + 1)}
+              disabled={index === total - 1}
+              className="grid h-10 w-10 place-items-center rounded-full bg-white text-black transition hover:bg-white/85 disabled:opacity-30"
+              aria-label="Próximo episódio"
+            >
+              <PlayIcon className="h-4 w-4 translate-x-px" />
+            </button>
 
-        <button
-          type="button"
-          onClick={() => go(index + 1)}
-          disabled={index === total - 1}
-          className="rounded bg-nfxred px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-nfxreddark disabled:cursor-default disabled:opacity-35"
-        >
-          Próximo
-        </button>
-      </motion.nav>
+            <button
+              type="button"
+              onClick={() => go(index - 1)}
+              disabled={index === 0}
+              className="grid h-9 w-9 place-items-center text-white/80 transition hover:text-white disabled:opacity-25"
+              aria-label="Anterior"
+            >
+              <ChevronLeftIcon className="h-6 w-6" />
+            </button>
+            <button
+              type="button"
+              onClick={() => go(index + 1)}
+              disabled={index === total - 1}
+              className="grid h-9 w-9 place-items-center text-white/80 transition hover:text-white disabled:opacity-25"
+              aria-label="Avançar"
+            >
+              <ChevronRightIcon className="h-6 w-6" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setMuted((m) => !m)}
+              className="grid h-9 w-9 place-items-center text-white/80 transition hover:text-white"
+              aria-label={muted ? "Ativar som" : "Silenciar"}
+            >
+              {muted ? (
+                <MuteIcon className="h-5 w-5" />
+              ) : (
+                <VolumeIcon className="h-5 w-5" />
+              )}
+            </button>
+
+            <div className="flex-1" />
+
+            {showPresenterScript ? (
+              <button
+                type="button"
+                onClick={() => setScriptOpen((o) => !o)}
+                className={`inline-flex items-center gap-2 rounded px-3 py-2 text-xs font-semibold transition ${
+                  scriptOpen
+                    ? "bg-nfxred text-white"
+                    : "text-white/80 hover:bg-white/10 hover:text-white"
+                }`}
+                aria-pressed={scriptOpen}
+                title="Tecla R"
+              >
+                <InfoIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">Roteiro</span>
+              </button>
+            ) : null}
+
+            <button
+              type="button"
+              onClick={() => setEpisodesOpen((o) => !o)}
+              className={`inline-flex items-center gap-2 rounded px-3 py-2 text-xs font-semibold transition ${
+                episodesOpen
+                  ? "bg-white text-black"
+                  : "text-white/80 hover:bg-white/10 hover:text-white"
+              }`}
+            >
+              <EpisodesIcon className="h-4 w-4" />
+              <span className="hidden sm:inline">Episódios</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={toggleFullscreen}
+              className="grid h-9 w-9 place-items-center text-white/80 transition hover:text-white"
+              aria-label="Tela cheia"
+            >
+              <FullscreenIcon className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+      </motion.footer>
     </main>
   );
 }
