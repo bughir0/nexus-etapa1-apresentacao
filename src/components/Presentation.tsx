@@ -21,17 +21,20 @@ import {
 export function Presentation({
   startIndex = 0,
   onExit,
+  showPresenterScript = false,
 }: {
   startIndex?: number;
   onExit?: () => void;
+  /** Roteiro só para o perfil apresentador (Gustavo) */
+  showPresenterScript?: boolean;
 }) {
   const [index, setIndex] = useState(startIndex);
   const [controlsVisible, setControlsVisible] = useState(true);
   const [muted, setMuted] = useState(true);
   const [titleCardVisible, setTitleCardVisible] = useState(true);
   const [episodesOpen, setEpisodesOpen] = useState(false);
-  /** Roteiro do apresentador — aberto por padrão para ler à turma */
-  const [scriptOpen, setScriptOpen] = useState(true);
+  /** Roteiro do apresentador — aberto por padrão só no perfil Gustavo */
+  const [scriptOpen, setScriptOpen] = useState(showPresenterScript);
   const [direction, setDirection] = useState(0);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const titleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -98,11 +101,13 @@ export function Presentation({
       }
       if (e.key.toLowerCase() === "m") setMuted((m) => !m);
       if (e.key.toLowerCase() === "e") setEpisodesOpen((o) => !o);
-      if (e.key.toLowerCase() === "r") setScriptOpen((o) => !o);
+      if (showPresenterScript && e.key.toLowerCase() === "r") {
+        setScriptOpen((o) => !o);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [go, index, total, onExit, revealControls, episodesOpen]);
+  }, [go, index, total, onExit, revealControls, episodesOpen, showPresenterScript]);
 
   useEffect(() => {
     let startX: number | null = null;
@@ -224,9 +229,9 @@ export function Presentation({
         <ChevronRightIcon className="h-6 w-6" />
       </motion.button>
 
-      {/* Roteiro do apresentador — permanece visível para leitura em voz alta */}
+      {/* Roteiro — apenas no perfil Gustavo */}
       <AnimatePresence>
-        {scriptOpen ? (
+        {showPresenterScript && scriptOpen ? (
           <motion.aside
             key={`script-${slide.id}`}
             initial={{ opacity: 0, y: 16 }}
@@ -414,20 +419,22 @@ export function Presentation({
 
             <div className="flex-1" />
 
-            <button
-              type="button"
-              onClick={() => setScriptOpen((o) => !o)}
-              className={`inline-flex items-center gap-2 rounded px-3 py-2 text-xs font-semibold transition ${
-                scriptOpen
-                  ? "bg-nfxred text-white"
-                  : "text-white/80 hover:bg-white/10 hover:text-white"
-              }`}
-              aria-pressed={scriptOpen}
-              title="Tecla R"
-            >
-              <InfoIcon className="h-4 w-4" />
-              <span className="hidden sm:inline">Roteiro</span>
-            </button>
+            {showPresenterScript ? (
+              <button
+                type="button"
+                onClick={() => setScriptOpen((o) => !o)}
+                className={`inline-flex items-center gap-2 rounded px-3 py-2 text-xs font-semibold transition ${
+                  scriptOpen
+                    ? "bg-nfxred text-white"
+                    : "text-white/80 hover:bg-white/10 hover:text-white"
+                }`}
+                aria-pressed={scriptOpen}
+                title="Tecla R"
+              >
+                <InfoIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">Roteiro</span>
+              </button>
+            ) : null}
 
             <button
               type="button"

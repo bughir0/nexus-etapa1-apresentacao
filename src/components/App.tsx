@@ -120,7 +120,11 @@ export function App() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.55 }}
         >
-          <Presentation startIndex={startIndex} onExit={exit} />
+          <Presentation
+            startIndex={startIndex}
+            onExit={exit}
+            showPresenterScript={profile?.id === "gustavo"}
+          />
         </motion.div>
       ) : null}
     </AnimatePresence>
